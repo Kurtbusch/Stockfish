@@ -158,6 +158,7 @@ namespace {
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CloseEnemies       = S(  6,  0);
   constexpr Score CorneredBishop     = S( 50, 50);
+  constexpr Score EffectiveBishop    = S( 10, 10);
   constexpr Score Hanging            = S( 57, 32);
   constexpr Score KingProtector      = S(  6,  6);
   constexpr Score KnightOnQueen      = S( 21, 11);
@@ -352,6 +353,8 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
+
+				score += EffectiveBishop * popcount(pos.pieces(Them, ROOK));
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
