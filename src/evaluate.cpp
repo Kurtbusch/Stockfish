@@ -784,6 +784,9 @@ namespace {
             && pos.non_pawn_material(WHITE) == BishopValueMg
             && pos.non_pawn_material(BLACK) == BishopValueMg)
             sf = 8 + 4 * pe->pawn_asymmetry();
+		else if (   pos.non_pawn_material(WHITE) % RookValueMg == 0
+			     && pos.non_pawn_material(BLACK) % RookValueMg == 0)
+			sf = std::min(20 + 4 * pe->pawn_asymmetry(), sf);
         else
             sf = std::min(40 + (pos.opposite_bishops() ? 2 : 7) * pos.count<PAWN>(strongSide), sf);
 
