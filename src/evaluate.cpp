@@ -340,6 +340,9 @@ namespace {
             // Penalty if the piece is far from the king
             score -= KingProtector * distance(s, pos.square<KING>(Us));
 
+			if (pos.pieces(Us, ROOK) & RANK_3)
+				score -= make_score(1, 0);
+
             if (Pt == BISHOP)
             {
                 // Penalty according to number of pawns on the same color square as the
@@ -374,6 +377,8 @@ namespace {
             // Bonus for aligning rook with enemy pawns on the same rank/file
             if (relative_rank(Us, s) >= RANK_5)
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
+			else if (relative_rank(Us, s) == RANK_3 && mob >= 4)
+				score += make_score(mob / 4 * 3 + 2, 0);
 
             // Bonus for rook on an open or semi-open file
             if (pe->semiopen_file(Us, file_of(s)))
