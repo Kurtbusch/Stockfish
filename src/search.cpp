@@ -935,6 +935,9 @@ moves_loop: // When in check, search starts from here
       else if (    givesCheck // Check extension (~2 Elo)
                &&  pos.see_ge(move))
           extension = ONE_PLY;
+	  else if (    captureOrPromotion
+		       &&  pos.see_ge(move))
+		  extension = ONE_PLY;
 
       // Calculate new depth for this move
       newDepth = depth - ONE_PLY + extension;
