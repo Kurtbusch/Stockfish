@@ -167,6 +167,7 @@ namespace {
   constexpr Score PawnlessFlank      = S( 19, 84);
   constexpr Score RookOnPawn         = S( 10, 30);
   constexpr Score SliderOnQueen      = S( 42, 21);
+  constexpr Score SwappedPawns       = S(  5,  7);
   constexpr Score ThreatByKing       = S( 23, 76);
   constexpr Score ThreatByPawnPush   = S( 45, 40);
   constexpr Score ThreatByRank       = S( 16,  3);
@@ -345,9 +346,13 @@ namespace {
                 // Penalty according to number of pawns on the same color square as the
                 // bishop, bigger when the center files are blocked with pawns.
                 Bitboard blocked = pos.pieces(Us, PAWN) & shift<Down>(pos.pieces());
-
+				Bitboard spawns = pos.pieces(Them, PAWN) & shift<Down>(pos.pieces(Us, PAWN));
+				int blockedCenter = 1 + popcount(blocked & CenterFiles);
+				
                 score -= BishopPawns * pe->pawns_on_same_color_squares(Us, s)
-                                     * (1 + popcount(blocked & CenterFiles));
+                                     * blockedCenter;
+
+				score -= SwappedPawns * popcount(spawns) * blockedCenter;
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
