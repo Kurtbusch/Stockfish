@@ -845,8 +845,14 @@ namespace {
     score += initiative(eg_value(score));
 
     // Interpolate between a middlegame and a (scaled by 'sf') endgame score
-    ScaleFactor sf = scale_factor(eg_value(score));
-    v =  mg_value(score) * int(me->game_phase())
+	ScaleFactor sfmg = SCALE_FACTOR_NORMAL;
+	ScaleFactor sf = scale_factor(eg_value(score));
+
+	Bitboard blocked = pos.pieces() & (shift<NORTH>(pos.pieces(WHITE, PAWN)) | shift<SOUTH>(pos.pieces(BLACK, PAWN)));
+	if (popcount(blocked) > pos.count<PAWN>() * 3 / 4)
+		sfmg = ScaleFactor(32);
+
+    v =  mg_value(score) * int(me->game_phase()) * sfmg / SCALE_FACTOR_NORMAL
        + eg_value(score) * int(PHASE_MIDGAME - me->game_phase()) * sf / SCALE_FACTOR_NORMAL;
 
     v /= int(PHASE_MIDGAME);
