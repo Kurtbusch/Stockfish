@@ -73,6 +73,8 @@ using namespace Trace;
 
 namespace {
 
+  int A = 3, B = 4, C = 8, D = 30;
+
   constexpr Bitboard QueenSide   = FileABB | FileBBB | FileCBB | FileDBB;
   constexpr Bitboard CenterFiles = FileCBB | FileDBB | FileEBB | FileFBB;
   constexpr Bitboard KingSide    = FileEBB | FileFBB | FileGBB | FileHBB;
@@ -845,8 +847,15 @@ namespace {
     score += initiative(eg_value(score));
 
     // Interpolate between a middlegame and a (scaled by 'sf') endgame score
-    ScaleFactor sf = scale_factor(eg_value(score));
-    v =  mg_value(score) * int(me->game_phase())
+	ScaleFactor sfmg = SCALE_FACTOR_NORMAL;
+	ScaleFactor sf = scale_factor(eg_value(score));
+	Bitboard blocked = pos.pieces() & (shift<NORTH>(pos.pieces(WHITE, PAWN)) | shift<SOUTH>(pos.pieces(BLACK, PAWN)));
+	int pawns = pos.count<PAWN>();
+
+	if (popcount(blocked) > pawns * A / B && pawns > C)
+		sfmg = ScaleFactor(D);
+
+	v = mg_value(score) * int(me->game_phase()) * sfmg / SCALE_FACTOR_NORMAL
        + eg_value(score) * int(PHASE_MIDGAME - me->game_phase()) * sf / SCALE_FACTOR_NORMAL;
 
     v /= int(PHASE_MIDGAME);
@@ -865,6 +874,7 @@ namespace {
            + Eval::Tempo;
   }
 
+  TUNE(A, B, C, D);
 } // namespace
 
 
