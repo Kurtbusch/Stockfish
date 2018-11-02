@@ -1,4 +1,4 @@
-/*
+	/*
   Stockfish, a UCI chess playing engine derived from Glaurung 2.1
   Copyright (C) 2004-2008 Tord Romstad (Glaurung author)
   Copyright (C) 2008-2015 Marco Costalba, Joona Kiiski, Tord Romstad
@@ -330,7 +330,11 @@ void Thread::search() {
 
   multiPV = std::min(multiPV, rootMoves.size());
 
-  int ct = int(Options["Contempt"]) * PawnValueEg / 100; // From centipawns
+  int oct = int(Options["Contempt"]);
+
+  oct = 4 + ((15000 - std::max(9000, std::min(15000, int(rootPos.non_pawn_material(WHITE) + rootPos.non_pawn_material(BLACK))))) * (oct - 4)) / 6000;
+
+  int ct = oct * PawnValueEg / 100; // From centipawns
 
   // In analysis mode, adjust contempt in accordance with user preference
   if (Limits.infinite || Options["UCI_AnalyseMode"])
