@@ -171,7 +171,8 @@ namespace {
   constexpr Score ThreatByPawnPush   = S( 45, 40);
   constexpr Score ThreatByRank       = S( 16,  3);
   constexpr Score ThreatBySafePawn   = S(173,102);
-  constexpr Score TrappedRook        = S( 96,  5);
+  constexpr Score TrappedRook        = S( 82,  5);
+  constexpr Score WeakEdgeRook       = S( 10,  0);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S( 15, 19);
 
@@ -371,20 +372,27 @@ namespace {
 
         if (Pt == ROOK)
         {
+			File f = file_of(s);
             // Bonus for aligning rook with enemy pawns on the same rank/file
             if (relative_rank(Us, s) >= RANK_5)
                 score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
 
             // Bonus for rook on an open or semi-open file
-            if (pe->semiopen_file(Us, file_of(s)))
-                score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
+            if (pe->semiopen_file(Us, f))
+                score += RookOnFile[bool(pe->semiopen_file(Them, f))];
 
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob <= 3)
             {
                 File kf = file_of(pos.square<KING>(Us));
-                if ((kf < FILE_E) == (file_of(s) < kf))
+                if ((kf < FILE_E) == (f < kf))
                     score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.can_castle(Us));
+
+				if (relative_rank(Us, s) == RANK_1)
+					score -= WeakEdgeRook;
+
+				if ((f == FILE_A) || (f == FILE_H))
+					score -= WeakEdgeRook;
             }
         }
 
