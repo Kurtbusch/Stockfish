@@ -379,6 +379,9 @@ namespace {
             if (pe->semiopen_file(Us, file_of(s)))
                 score += RookOnFile[bool(pe->semiopen_file(Them, file_of(s)))];
 
+			else if (relative_rank(Us, s) == RANK_3 && mob >= 4)
+				score += make_score(mob / 4 * 3, 0);
+
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob <= 3)
             {
