@@ -96,6 +96,7 @@ namespace {
   constexpr int RookSafeCheck   = 880;
   constexpr int BishopSafeCheck = 435;
   constexpr int KnightSafeCheck = 790;
+  constexpr int PawnSafeCheck   = 435;
 
 #define S(mg, eg) make_score(mg, eg)
 
@@ -410,9 +411,10 @@ namespace {
     constexpr Color    Them = (Us == WHITE ? BLACK : WHITE);
     constexpr Bitboard Camp = (Us == WHITE ? AllSquares ^ Rank6BB ^ Rank7BB ^ Rank8BB
                                            : AllSquares ^ Rank1BB ^ Rank2BB ^ Rank3BB);
+	constexpr Direction Down = (Us == WHITE ? SOUTH : NORTH);
 
     const Square ksq = pos.square<KING>(Us);
-    Bitboard kingFlank, weak, b, b1, b2, safe, unsafeChecks;
+    Bitboard kingFlank, weak, b, b1, b2, b3, safe, unsafeChecks;
 
     // King shelter and enemy pawns storm
     Score score = pe->king_safety<Us>(pos, ksq);
@@ -468,6 +470,13 @@ namespace {
             kingDanger += KnightSafeCheck;
         else
             unsafeChecks |= b;
+
+		// Enemy pawns checks
+		b3 = pawn_attack_span(Us, ksq) & ((shift<Down>(pos.pieces(Them, PAWN)) & ~pos.pieces()) | (pe->pawn_attacks_span(Them) & pos.pieces(Us)));
+		if (b3 & safe)
+			kingDanger += PawnSafeCheck;
+		else
+			unsafeChecks |= b3;
 
         // Unsafe or occupied checking squares will also be considered, as long as
         // the square is in the attacker's mobility area.
