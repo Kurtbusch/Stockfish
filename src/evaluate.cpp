@@ -472,7 +472,7 @@ namespace {
             unsafeChecks |= b;
 
 		// Enemy pawns checks
-		b3 = pawn_attack_span(Us, ksq) & ((shift<Down>(pos.pieces(Them, PAWN)) & ~pos.pieces()) | (pe->pawn_attacks_span(Them) & pos.pieces(Us)));
+		b3 = PawnAttacks[Us][ksq] & ((shift<Down>(pos.pieces(Them, PAWN)) & ~pos.pieces()) | (attackedBy[Them][PAWN] & pos.pieces(Us)));
 		if (b3 & safe)
 			kingDanger += PawnSafeCheck;
 		else
