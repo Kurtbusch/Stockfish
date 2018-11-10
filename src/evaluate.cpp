@@ -155,25 +155,27 @@ namespace {
   constexpr int PassedDanger[RANK_NB] = { 0, 0, 0, 3, 7, 11, 20 };
 
   // Assorted bonuses and penalties
-  constexpr Score BishopPawns        = S(  3,  7);
-  constexpr Score CloseEnemies       = S(  6,  0);
+  Score BishopPawns        = S(  3,  7);
+  Score CloseEnemies       = S(  6,  0);
   constexpr Score CorneredBishop     = S( 50, 50);
-  constexpr Score Hanging            = S( 57, 32);
-  constexpr Score KingProtector      = S(  6,  6);
-  constexpr Score KnightOnQueen      = S( 21, 11);
-  constexpr Score LongDiagonalBishop = S( 46,  0);
-  constexpr Score MinorBehindPawn    = S( 16,  0);
-  constexpr Score Overload           = S( 13,  6);
-  constexpr Score PawnlessFlank      = S( 19, 84);
-  constexpr Score RookOnPawn         = S( 10, 29);
-  constexpr Score SliderOnQueen      = S( 42, 21);
-  constexpr Score ThreatByKing       = S( 22, 78);
-  constexpr Score ThreatByPawnPush   = S( 45, 40);
-  constexpr Score ThreatByRank       = S( 16,  3);
-  constexpr Score ThreatBySafePawn   = S(173,102);
-  constexpr Score TrappedRook        = S( 96,  5);
-  constexpr Score WeakQueen          = S( 50, 10);
-  constexpr Score WeakUnopposedPawn  = S( 15, 19);
+  Score Hanging            = S( 57, 32);
+  Score KingProtector      = S(  6,  6);
+  Score KnightOnQueen      = S( 21, 11);
+  Score LongDiagonalBishop = S( 46,  0);
+  Score MinorBehindPawn    = S( 16,  0);
+  Score Overload           = S( 13,  6);
+  Score PawnlessFlank      = S( 19, 84);
+  Score RookOnPawn         = S( 10, 29);
+  Score SliderOnQueen      = S( 42, 21);
+  Score ThreatByKing       = S( 22, 78);
+  Score ThreatByPawnPush   = S( 45, 40);
+  Score ThreatByRank       = S( 16,  3);
+  Score ThreatBySafePawn   = S(173,102);
+  Score TrappedRook        = S( 96,  5);
+  Score WeakQueen          = S( 50, 10);
+  Score WeakUnopposedPawn  = S( 15, 19);
+
+  TUNE(BishopPawns, CloseEnemies, Hanging, KingProtector, KnightOnQueen, LongDiagonalBishop, MinorBehindPawn, Overload, PawnlessFlank, RookOnPawn, SliderOnQueen, ThreatByKing, ThreatByPawnPush, ThreatByRank, ThreatBySafePawn, TrappedRook, WeakQueen, WeakUnopposedPawn);
 
 #undef S
 
