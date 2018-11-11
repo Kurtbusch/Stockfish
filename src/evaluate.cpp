@@ -96,7 +96,7 @@ namespace {
   constexpr int RookSafeCheck   = 880;
   constexpr int BishopSafeCheck = 435;
   constexpr int KnightSafeCheck = 790;
-  constexpr int PawnSafeCheck   = 600;
+  constexpr int PawnSafeCheck   = 700;
 
 #define S(mg, eg) make_score(mg, eg)
 
