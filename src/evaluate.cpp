@@ -171,6 +171,7 @@ namespace {
   constexpr Score ThreatByPawnPush   = S( 45, 40);
   constexpr Score ThreatByRank       = S( 16,  3);
   constexpr Score ThreatBySafePawn   = S(173,102);
+  constexpr Score TrappedKing	     = S(  0, 20);
   constexpr Score TrappedRook        = S( 96,  5);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S( 15, 19);
@@ -494,6 +495,10 @@ namespace {
 
     // King tropism bonus, to anticipate slow motion attacks on our king
     score -= CloseEnemies * tropism;
+
+	if(     (relative_rank(Us, ksq) == RANK_1 && (file_of(ksq) == FILE_H || file_of(ksq) == FILE_A))
+		&& !(attackedBy[Us][KING] & ~(attackedBy[Them][ALL_PIECES] | pos.pieces())))
+		score -= TrappedKing;
 
     if (T)
         Trace::add(KING, Us, score);
