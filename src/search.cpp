@@ -213,7 +213,13 @@ void MainThread::search() {
                 << UCI::value(rootPos.checkers() ? -VALUE_MATE : VALUE_DRAW)
                 << sync_endl;
   }
-  else
+  else if ((shift<NORTH>(rootPos.pieces(WHITE, PAWN)) & rootPos.pieces(WHITE, PAWN)) || (shift<SOUTH>(rootPos.pieces(BLACK, PAWN)) & rootPos.pieces(BLACK, PAWN)))
+  {
+	  rootMoves.emplace_back(MOVE_NONE);
+	  sync_cout << "info depth 0 score "
+				<< UCI::value(-VALUE_MATE)
+				<< sync_endl;
+  }
   {
       for (Thread* th : Threads)
           if (th != this)
@@ -1175,6 +1181,8 @@ moves_loop: // When in check, search starts from here
     if (!moveCount)
         bestValue = excludedMove ? alpha
                    :     inCheck ? mated_in(ss->ply) : VALUE_DRAW;
+	else if((shift<NORTH>(pos.pieces(WHITE, PAWN)) & pos.pieces(WHITE, PAWN)) || (shift<SOUTH>(pos.pieces(BLACK, PAWN)) & pos.pieces(BLACK, PAWN)))
+		bestValue = excludedMove ? alpha : mated_in(ss->ply);
     else if (bestMove)
     {
         // Quiet best move: update move sorting heuristics
