@@ -162,6 +162,7 @@ namespace {
   constexpr Score MinorBehindPawn    = S( 16,  0);
   constexpr Score Overload           = S( 13,  6);
   constexpr Score PawnlessFlank      = S( 19, 84);
+  constexpr Score RelevantPiece      = S(  5,  0);
   constexpr Score RookOnPawn         = S( 10, 29);
   constexpr Score SliderOnQueen      = S( 42, 21);
   constexpr Score ThreatByKing       = S( 22, 78);
@@ -491,6 +492,10 @@ namespace {
 
     // King tropism bonus, to anticipate slow motion attacks on our king
     score -= CloseEnemies * tropism;
+	
+	if ((file_of(ksq) > FILE_D) == (file_of(pos.square<KING>(Them)) > FILE_D))
+		score +=  RelevantPiece 
+			    * popcount((pos.pieces(Us) ^ pos.pieces(Us, PAWN)) & (file_of(ksq) > FILE_D ? (KingSide | FileDBB) : (QueenSide | FileEBB)));
 
     if (T)
         Trace::add(KING, Us, score);
