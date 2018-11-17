@@ -169,6 +169,7 @@ namespace {
   constexpr Score ThreatByRank       = S( 16,  3);
   constexpr Score ThreatBySafePawn   = S(173,102);
   constexpr Score TrappedRook        = S( 96,  5);
+  constexpr Score VeryTrappedRook    = S( 20, 20);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S( 15, 19);
 
@@ -336,6 +337,9 @@ namespace {
 
             // Penalty if the piece is far from the king
             score -= KingProtector * distance(s, pos.square<KING>(Us));
+
+			if (mob == 0 && (pos.attacks_from<ROOK>(s) & (Us == WHITE ? Rank1BB : Rank8BB) & pos.pieces(Us, ROOK)))
+				score -= VeryTrappedRook;
 
             if (Pt == BISHOP)
             {
