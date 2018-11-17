@@ -156,6 +156,7 @@ namespace {
   constexpr Score CloseEnemies       = S(  6,  0);
   constexpr Score CorneredBishop     = S( 50, 50);
   constexpr Score Hanging            = S( 57, 32);
+  constexpr Score HemmedBishop       = S( 20, 20);
   constexpr Score KingProtector      = S(  6,  6);
   constexpr Score KnightOnQueen      = S( 21, 11);
   constexpr Score LongDiagonalBishop = S( 46,  0);
@@ -345,6 +346,9 @@ namespace {
 
                 score -= BishopPawns * pe->pawns_on_same_color_squares(Us, s)
                                      * (1 + popcount(blocked & CenterFiles));
+
+				if (mob == 0 && (popcount(pos.attacks_from<BISHOP>(s)) > 0 && popcount(pos.attacks_from<BISHOP>(s) & ~attackedBy[Them][PAWN]) == 0))
+					score -= HemmedBishop;
 
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
