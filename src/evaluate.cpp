@@ -157,6 +157,7 @@ namespace {
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CloseEnemies       = S(  6,  0);
+  constexpr Score ConfinedKing		 = S(  0, 50);
   constexpr Score CorneredBishop     = S( 50, 50);
   constexpr Score Hanging            = S( 57, 32);
   constexpr Score KingProtector      = S(  6,  6);
@@ -372,8 +373,12 @@ namespace {
         if (Pt == ROOK)
         {
             // Bonus for aligning rook with enemy pawns on the same rank/file
-            if (relative_rank(Us, s) >= RANK_5)
-                score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
+			if (relative_rank(Us, s) >= RANK_5)
+			{
+				score += RookOnPawn * popcount(pos.pieces(Them, PAWN) & PseudoAttacks[ROOK][s]);
+				if (relative_rank(Us, s) == RANK_7 && relative_rank(Them, pos.square<KING>(Them)) == RANK_8)
+					score += ConfinedKing;
+			}
 
             // Bonus for rook on an open or semi-open file
             if (pe->semiopen_file(Us, file_of(s)))
