@@ -332,6 +332,9 @@ void Thread::search() {
 
   int ct = int(Options["Contempt"]) * PawnValueEg / 100; // From centipawns
 
+  if (Limits.time[us] > (Limits.time[~us] * 2 + 5 * Limits.inc[~us]))
+	  ct += 20;
+
   // In analysis mode, adjust contempt in accordance with user preference
   if (Limits.infinite || Options["UCI_AnalyseMode"])
       ct =  Options["Analysis Contempt"] == "Off"  ? 0
