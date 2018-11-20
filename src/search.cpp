@@ -340,6 +340,8 @@ void Thread::search() {
           : Options["Analysis Contempt"] == "White" && us == BLACK ? -ct
           : Options["Analysis Contempt"] == "Black" && us == WHITE ? -ct
           : ct;
+  else
+	  ct += 3 -	std::sqrt(std::sqrt(Limits.time[us])) / 3;
 
   // In evaluate.cpp the evaluation is from the white point of view
   contempt = (us == WHITE ?  make_score(ct, ct / 2)
