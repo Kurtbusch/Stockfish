@@ -214,6 +214,13 @@ void MainThread::search() {
                 << UCI::value(rootPos.checkers() ? -VALUE_MATE : VALUE_DRAW)
                 << sync_endl;
   }
+  else if ((rank_of(rootPos.square<KING>(~us)) == RANK_4 || rank_of(rootPos.square<KING>(~us)) == RANK_5) && (file_of(rootPos.square<KING>(~us)) == FILE_D || file_of(rootPos.square<KING>(~us)) == FILE_E))
+  {
+	  rootMoves.emplace_back(MOVE_NONE);
+	  sync_cout << "info depth 0 score "
+		  << UCI::value(-VALUE_MATE)
+		  << sync_endl;
+  }
   else
   {
       for (Thread* th : Threads)
@@ -1178,6 +1185,8 @@ moves_loop: // When in check, search starts from here
     if (!moveCount)
         bestValue = excludedMove ? alpha
                    :     inCheck ? mated_in(ss->ply) : VALUE_DRAW;
+	else if ((rank_of(pos.square<KING>(~us)) == RANK_4 || rank_of(pos.square<KING>(~us)) == RANK_5) && (file_of(pos.square<KING>(~us)) == FILE_D || file_of(pos.square<KING>(~us)) == FILE_E))
+		bestValue = excludedMove ? alpha : mated_in(ss->ply);
     else if (bestMove)
     {
         // Quiet best move: update move sorting heuristics
