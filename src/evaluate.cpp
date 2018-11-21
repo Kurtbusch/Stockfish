@@ -853,6 +853,11 @@ namespace {
 
     v /= int(PHASE_MIDGAME);
 
+	if (v > 400)
+		v = mg_value(make_score(std::max(32000 - v, 400),0));
+	else if (v < -400)
+		v = mg_value(make_score(std::min(-32000 - v, -400),0));
+
     // In case of tracing add all remaining individual evaluation terms
     if (T)
     {
