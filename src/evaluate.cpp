@@ -380,7 +380,7 @@ namespace {
             else if (mob <= 3)
             {
                 File kf = file_of(pos.square<KING>(Us));
-				if ((kf < FILE_E) == (file_of(s) < kf) || (relative_rank(Us, s) == RANK_1 && (file_of(s) == FILE_A || file_of(s) == FILE_H)))
+				if ((kf < FILE_E) == (file_of(s) < kf) || ((mob <= 1 && relative_rank(Us, s) == RANK_1) && (file_of(s) == FILE_A || file_of(s) == FILE_H)))
                     score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.can_castle(Us));
             }
         }
