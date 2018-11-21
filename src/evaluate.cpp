@@ -564,7 +564,7 @@ namespace {
                 & ~attackedBy[Them][PAWN]
                 & ~attackedBy2[Them]
                 &  attackedBy[Us][ALL_PIECES];
-    score += RestrictedPiece * popcount(restricted & ~pos.pieces());
+    score += RestrictedPiece * popcount(restricted);
 
     // Bonus for enemy unopposed weak pawns
     if (pos.pieces(Us, ROOK, QUEEN))
@@ -590,6 +590,8 @@ namespace {
     // Bonus for threats on the next moves against enemy queen
     if (pos.count<QUEEN>(Them) == 1)
     {
+		score -= RestrictedPiece * popcount(restricted & attackedBy[Them][QUEEN]) / 2;
+
         Square s = pos.square<QUEEN>(Them);
         safe = mobilityArea[Us] & ~stronglyProtected;
 
