@@ -155,6 +155,7 @@ namespace {
   constexpr Score BishopPawns        = S(  3,  8);
   constexpr Score CloseEnemies       = S(  7,  0);
   constexpr Score CorneredBishop     = S( 50, 50);
+  constexpr Score CorneredRook       = S(  0, 60);
   constexpr Score Hanging            = S( 62, 34);
   constexpr Score KingProtector      = S(  6,  7);
   constexpr Score KnightOnQueen      = S( 20, 12);
@@ -382,7 +383,10 @@ namespace {
             {
                 File kf = file_of(pos.square<KING>(Us));
                 if ((kf < FILE_E) == (file_of(s) < kf))
-                    score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.can_castle(Us));
+                    score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.can_castle(Us));\
+
+				if (mob <= 1 && ((relative_rank(Us, s) == RANK_1) && (file_of(s) == FILE_A || file_of(s) == FILE_H)))
+					score -= CorneredRook;
             }
         }
 
