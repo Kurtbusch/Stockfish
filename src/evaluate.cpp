@@ -172,7 +172,7 @@ namespace {
   constexpr Score ThreatByPawnPush   = S( 45, 40);
   constexpr Score ThreatByRank       = S( 16,  3);
   constexpr Score ThreatBySafePawn   = S(173,102);
-  constexpr Score TrappedRook        = S( 96,  5);
+  constexpr Score TrappedRook        = S( 96, 5);
   constexpr Score WeakQueen          = S( 50, 10);
   constexpr Score WeakUnopposedPawn  = S( 15, 19);
 
@@ -489,7 +489,7 @@ namespace {
 
         // Transform the kingDanger units into a Score, and subtract it from the evaluation
         if (kingDanger > 0)
-            score -= make_score(kingDanger * kingDanger / 4096, kingDanger / 32);
+            score -= make_score(kingDanger * kingDanger / 4096, kingDanger / 16);
     }
 
     // Penalty when our king is on a pawnless flank
@@ -498,6 +498,9 @@ namespace {
 
     // King tropism bonus, to anticipate slow motion attacks on our king
     score -= CloseEnemies * tropism;
+
+	//if (popcount(file_bb(ksq + pawn_push(Us)) & (attackedBy[Them][ALL_PIECES] | pos.pieces(Them))) == 8)
+		//score -= ConfinedKing;
 
     if (T)
         Trace::add(KING, Us, score);
@@ -786,7 +789,7 @@ namespace {
             && pos.non_pawn_material(BLACK) == BishopValueMg)
             sf = 8 + 4 * pe->pawn_asymmetry();
         else
-            sf = std::min(40 + (pos.opposite_bishops() ? 2 : 7) * pos.count<PAWN>(strongSide), sf);
+            sf = std::min(40 + /*(pos.opposite_bishops() ? 2 : */7/*)*/ * pos.count<PAWN>(strongSide), sf);
 
     }
 
