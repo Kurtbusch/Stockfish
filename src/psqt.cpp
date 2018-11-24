@@ -37,15 +37,7 @@ namespace PSQT {
 // second half of the files.
 constexpr Score Bonus[][RANK_NB][int(FILE_NB) / 2] = {
   { },
-  { // Pawn
-   { S(  0, 0), S(  0,  0), S(  0, 0), S( 0, 0) },
-   { S(-11,-3), S(  7, -1), S(  7, 7), S(17, 2) },
-   { S(-16,-2), S( -3,  2), S( 23, 6), S(23,-1) },
-   { S(-14, 7), S( -7, -4), S( 20,-8), S(24, 2) },
-   { S( -5,13), S( -2, 10), S( -1,-1), S(12,-8) },
-   { S(-11,16), S(-12,  6), S( -2, 1), S( 4,16) },
-   { S( -2, 1), S( 20,-12), S(-10, 6), S(-2,25) }
-  },
+  { },
   { // Knight
    { S(-169,-105), S(-96,-74), S(-80,-46), S(-79,-18) },
    { S( -79, -70), S(-39,-56), S(-24,-15), S( -9,  6) },
@@ -98,6 +90,17 @@ constexpr Score Bonus[][RANK_NB][int(FILE_NB) / 2] = {
   }
 };
 
+Score PBonus[RANK_NB][FILE_NB] =
+  { // Pawn
+   { S(  0, 0), S(  0,  0), S(  0, 0), S( 0, 0), S(0, 0), S(0, 0), S(0,0),S(0,0) },
+   { S(-11,-3), S(  7, -1), S(  7, 7), S(17, 2),S(17, 2), S(7, 7), S(7, -1), S(-11,-3) },
+   { S(-16,-2), S( -3,  2), S( 23, 6), S(23,-1),S(23,-1),S(23,6),S(-3,2),S(-16,-2) },
+   { S(-14, 7), S( -7, -4), S( 20,-8), S(24, 2),S(24,2),S(20,-8),S(-7,-4),S(-14,7) },
+   { S( -5,13), S( -2, 10), S( -1,-1), S(12,-8),S(12,-8),S(-1,-1),S(-2,10),S(-5,13) },
+   { S(-11,16), S(-12,  6), S( -2, 1), S( 4,16),S(4,16),S(-2,1),S(-12,6),S(-11,16) },
+   { S( -2, 1), S( 20,-12), S(-10, 6), S(-2,25),S(-2,25),S(-10,6),S(20,-12),S(-2,1) }
+  };
+
 #undef S
 
 Score psq[PIECE_NB][SQUARE_NB];
@@ -117,10 +120,12 @@ void init() {
       for (Square s = SQ_A1; s <= SQ_H8; ++s)
       {
           File f = std::min(file_of(s), ~file_of(s));
-          psq[ pc][ s] = score + Bonus[pc][rank_of(s)][f];
+          psq[ pc][ s] = score + (pc == W_PAWN ? PBonus[rank_of(s)][file_of(s)] : Bonus[pc][rank_of(s)][f]);
           psq[~pc][~s] = -psq[pc][s];
       }
   }
 }
+
+TUNE(SetRange(-50, 375), PBonus, init);
 
 } // namespace PSQT
