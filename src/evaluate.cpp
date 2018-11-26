@@ -551,7 +551,7 @@ namespace {
         }
 
         if (weak & attackedBy[Us][KING])
-            score += ThreatByKing;
+            score += ThreatByKing / (1 + bool(weak & attackedBy[Us][KING] & attackedBy[Them][ALL_PIECES]));
 
         score += Hanging * popcount(weak & ~attackedBy[Them][ALL_PIECES]);
 
