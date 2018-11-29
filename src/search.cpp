@@ -549,6 +549,8 @@ namespace {
     constexpr bool PvNode = NT == PV;
     const bool rootNode = PvNode && ss->ply == 0;
 
+	Color us = pos.side_to_move();
+
     // Check if we have an upcoming move which draws by repetition, or
     // if the opponent had an alternative move earlier to this position.
     if (   pos.rule50_count() >= 3
@@ -556,7 +558,7 @@ namespace {
         && !rootNode
         && pos.has_game_cycle(ss->ply))
     {
-        alpha = value_draw(depth, pos.this_thread());
+        alpha = relative_rank(us, pos.square<KING>(us)) > relative_rank(~us, pos.square<KING>(~us)) ? VALUE_MATE : (relative_rank(us, pos.square<KING>(us)) < relative_rank(~us, pos.square<KING>(~us)) ? -VALUE_MATE : value_draw(depth, pos.this_thread()));
         if (alpha >= beta)
             return alpha;
     }
@@ -586,7 +588,6 @@ namespace {
     // Step 1. Initialize node
     Thread* thisThread = pos.this_thread();
     inCheck = pos.checkers();
-    Color us = pos.side_to_move();
     moveCount = captureCount = quietCount = ss->moveCount = 0;
     bestValue = -VALUE_INFINITE;
     maxValue = VALUE_INFINITE;
@@ -606,7 +607,7 @@ namespace {
             || pos.is_draw(ss->ply)
             || ss->ply >= MAX_PLY)
             return (ss->ply >= MAX_PLY && !inCheck) ? evaluate(pos) 
-                                                    : value_draw(depth, pos.this_thread());
+                                                    : (relative_rank(us, pos.square<KING>(us)) > relative_rank(~us, pos.square<KING>(~us)) ? VALUE_MATE : (relative_rank(us, pos.square<KING>(us)) < relative_rank(~us, pos.square<KING>(~us)) ? -VALUE_MATE : value_draw(depth, pos.this_thread())));
 
         // Step 3. Mate distance pruning. Even if we mate at the next move our score
         // would be at best mate_in(ss->ply+1), but if alpha is already bigger because
