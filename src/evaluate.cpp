@@ -154,7 +154,8 @@ namespace {
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  8);
   constexpr Score CloseEnemies       = S(  7,  0);
-  constexpr Score CorneredBishop     = S( 50, 50);
+  constexpr Score CorneredBishop     = S(  0, 50);
+  constexpr Score CorneredBishop960  = S( 50, 50);
   constexpr Score Hanging            = S( 62, 34);
   constexpr Score KingProtector      = S(  6,  7);
   constexpr Score KnightOnQueen      = S( 20, 12);
@@ -350,6 +351,9 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
+
+				if (mob <= 1 && relative_rank(Us, s) == RANK_1 && !(s & CenterFiles))
+					score -= CorneredBishop;
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
@@ -361,9 +365,9 @@ namespace {
             {
                 Direction d = pawn_push(Us) + (file_of(s) == FILE_A ? EAST : WEST);
                 if (pos.piece_on(s + d) == make_piece(Us, PAWN))
-                    score -= !pos.empty(s + d + pawn_push(Us))                ? CorneredBishop * 4
-                            : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2
-                                                                              : CorneredBishop;
+                    score -= !pos.empty(s + d + pawn_push(Us))                ? CorneredBishop960 * 4
+                            : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop960 * 2
+                                                                              : CorneredBishop960;
             }
         }
 
