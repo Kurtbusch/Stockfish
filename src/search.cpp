@@ -331,7 +331,9 @@ void Thread::search() {
 
   multiPV = std::min(multiPV, rootMoves.size());
 
-  int ct = int(Options["Contempt"]) * PawnValueEg / 100; // From centipawns
+  int ct =  (int(Options["Contempt"]) 
+	      + popcount(shift<NORTH>(rootPos.pieces(WHITE, PAWN)) & rootPos.pieces(BLACK, PAWN)))
+	      * PawnValueEg / 100; // From centipawns
 
   // In analysis mode, adjust contempt in accordance with user preference
   if (Limits.infinite || Options["UCI_AnalyseMode"])
