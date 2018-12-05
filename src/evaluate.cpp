@@ -89,13 +89,17 @@ namespace {
   constexpr Value SpaceThreshold = Value(12222);
 
   // KingAttackWeights[PieceType] contains king attack weights by piece type
-  constexpr int KingAttackWeights[PIECE_TYPE_NB] = { 0, 0, 77, 55, 44, 10 };
+  int KingAttackWeights[PIECE_TYPE_NB] = { 0, 0, 77, 55, 44, 10 };
 
   // Penalties for enemy's safe checks
-  constexpr int QueenSafeCheck  = 780;
-  constexpr int RookSafeCheck   = 880;
-  constexpr int BishopSafeCheck = 435;
-  constexpr int KnightSafeCheck = 790;
+  int QueenSafeCheck  = 780;
+  int RookSafeCheck   = 880;
+  int BishopSafeCheck = 435;
+  int KnightSafeCheck = 790;
+
+  int A = 69, B = 185, C = 150, D = 873, E = 6, F = 30;
+
+  TUNE(KingAttackWeights, QueenSafeCheck, RookSafeCheck, BishopSafeCheck, KnightSafeCheck, A, B, C, D, E, F);
 
 #define S(mg, eg) make_score(mg, eg)
 
@@ -471,14 +475,14 @@ namespace {
         unsafeChecks &= mobilityArea[Them];
 
         kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
-                     +  69 * kingAttacksCount[Them]
-                     + 185 * popcount(kingRing[Us] & weak)
-                     + 150 * popcount(pos.blockers_for_king(Us) | unsafeChecks)
+                     +  A * kingAttacksCount[Them]
+                     + B * popcount(kingRing[Us] & weak)
+                     + C * popcount(pos.blockers_for_king(Us) | unsafeChecks)
                      +       tropism * tropism / 4
-                     - 873 * !pos.count<QUEEN>(Them)
-                     -   6 * mg_value(score) / 8
+                     - D * !pos.count<QUEEN>(Them)
+                     -   E * mg_value(score) / 8
                      +       mg_value(mobility[Them] - mobility[Us])
-                     -   30;
+                     -   F;
 
         // Transform the kingDanger units into a Score, and subtract it from the evaluation
         if (kingDanger > 0)
