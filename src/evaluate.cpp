@@ -151,6 +151,10 @@ namespace {
     S(-30,-14), S(-9, -8), S( 0,  9), S( -1,  7)
   };
 
+  int fileDanger[FILE_NB] = { 0, 0, 0, 100, 100, 100, 0, 0 };
+
+  TUNE(fileDanger);
+
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CloseEnemies       = S(  8,  0);
@@ -470,6 +474,9 @@ namespace {
         // Unsafe or occupied checking squares will also be considered, as long as
         // the square is in the attacker's mobility area.
         unsafeChecks &= mobilityArea[Them];
+
+		if (!pos.castling_rights(Us))
+			kingDanger += fileDanger[file_of(ksq)];
 
         kingDanger +=        kingAttackersCount[Them] * kingAttackersWeight[Them]
                      +  69 * kingAttacksCount[Them]
