@@ -2,18 +2,15 @@
   Stockfish, a UCI chess playing engine derived from Glaurung 2.1
   Copyright (C) 2004-2008 Tord Romstad (Glaurung author)
   Copyright (C) 2008-2015 Marco Costalba, Joona Kiiski, Tord Romstad
-  Copyright (C) 2015-2018 Marco Costalba, Joona Kiiski, Gary Linscott, Tord Romstad
-
+  Copyright (C) 2015-2019 Marco Costalba, Joona Kiiski, Gary Linscott, Tord Romstad
   Stockfish is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-
   Stockfish is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -43,8 +40,6 @@
 #include <climits>
 #include <cstdint>
 #include <cstdlib>
-#include <string>
-#include <vector>
 
 #if defined(_MSC_VER)
 // Disable some silly and noisy warning from MSVC compiler
@@ -104,130 +99,6 @@ typedef uint64_t Bitboard;
 
 constexpr int MAX_MOVES = 256;
 constexpr int MAX_PLY   = 128;
-
-enum Variant {
-	//main variants
-	CHESS_VARIANT,
-#ifdef ANTI
-	ANTI_VARIANT,
-#endif
-#ifdef ATOMIC
-	ATOMIC_VARIANT,
-#endif
-#ifdef CRAZYHOUSE
-	CRAZYHOUSE_VARIANT,
-#endif
-#ifdef EXTINCTION
-	EXTINCTION_VARIANT,
-#endif
-#ifdef GRID
-	GRID_VARIANT,
-#endif
-#ifdef HORDE
-	HORDE_VARIANT,
-#endif
-#ifdef KOTH
-	KOTH_VARIANT,
-#endif
-#ifdef LOSERS
-	LOSERS_VARIANT,
-#endif
-#ifdef RACE
-	RACE_VARIANT,
-#endif
-#ifdef THREECHECK
-	THREECHECK_VARIANT,
-#endif
-#ifdef TWOKINGS
-	TWOKINGS_VARIANT,
-#endif
-	VARIANT_NB,
-	LAST_VARIANT = VARIANT_NB - 1,
-	//subvariants
-#ifdef SUICIDE
-	SUICIDE_VARIANT,
-#endif
-#ifdef BUGHOUSE
-	BUGHOUSE_VARIANT,
-#endif
-#ifdef DISPLACEDGRID
-	DISPLACEDGRID_VARIANT,
-#endif
-#ifdef LOOP
-	LOOP_VARIANT,
-#endif
-#ifdef PLACEMENT
-	PLACEMENT_VARIANT,
-#endif
-#ifdef SLIPPEDGRID
-	SLIPPEDGRID_VARIANT,
-#endif
-#ifdef TWOKINGSSYMMETRIC
-	TWOKINGSSYMMETRIC_VARIANT,
-#endif
-	SUBVARIANT_NB,
-};
-
-//static const constexpr char* variants[] doesn't play nicely with uci.h
-static std::vector<std::string> variants = {
-	//main variants
-	"chess",
-#ifdef ANTI
-	"giveaway",
-#endif
-#ifdef ATOMIC
-	"atomic",
-#endif
-#ifdef CRAZYHOUSE
-	"crazyhouse",
-#endif
-#ifdef EXTINCTION
-	"extinction",
-#endif
-#ifdef GRID
-	"grid",
-#endif
-#ifdef HORDE
-	"horde",
-#endif
-#ifdef KOTH
-	"kingofthehill",
-#endif
-#ifdef LOSERS
-	"losers",
-#endif
-#ifdef RACE
-	"racingkings",
-#endif
-#ifdef THREECHECK
-	"3check",
-#endif
-#ifdef TWOKINGS
-	"twokings",
-#endif
-	//subvariants
-#ifdef SUICIDE
-	"suicide",
-#endif
-#ifdef BUGHOUSE
-	"bughouse",
-#endif
-#ifdef DISPLACEDGRID
-	"displacedgrid",
-#endif
-#ifdef LOOP
-	"loop",
-#endif
-#ifdef PLACEMENT
-	"placement",
-#endif
-#ifdef SLIPPEDGRID
-	"slippedgrid",
-#endif
-#ifdef TWOKINGSSYMMETRIC
-	"twokingssymmetric",
-#endif
-};
 
 /// A move needs 16 bits to be stored
 ///
@@ -302,10 +173,10 @@ enum Value : int {
   VALUE_MATE_IN_MAX_PLY  =  VALUE_MATE - 2 * MAX_PLY,
   VALUE_MATED_IN_MAX_PLY = -VALUE_MATE + 2 * MAX_PLY,
 
-  PawnValueMg   = 142,   PawnValueEg   = 207,
-  KnightValueMg = 784,   KnightValueEg = 868,
-  BishopValueMg = 828,   BishopValueEg = 916,
-  RookValueMg   = 1286,  RookValueEg   = 1378,
+  PawnValueMg   = 136,   PawnValueEg   = 208,
+  KnightValueMg = 782,   KnightValueEg = 865,
+  BishopValueMg = 830,   BishopValueEg = 918,
+  RookValueMg   = 1289,  RookValueEg   = 1378,
   QueenValueMg  = 2529,  QueenValueEg  = 2687,
 
   MidgameLimit  = 15258, EndgameLimit  = 3915
@@ -420,7 +291,6 @@ constexpr int operator/(T d1, T d2) { return int(d1) / int(d2); }  \
 inline T& operator*=(T& d, int i) { return d = T(int(d) * i); }    \
 inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
 
-ENABLE_FULL_OPERATORS_ON(Variant)
 ENABLE_FULL_OPERATORS_ON(Value)
 ENABLE_FULL_OPERATORS_ON(Depth)
 ENABLE_FULL_OPERATORS_ON(Direction)
@@ -580,45 +450,6 @@ constexpr Move make(Square from, Square to, PieceType pt = KNIGHT) {
 
 constexpr bool is_ok(Move m) {
   return from_sq(m) != to_sq(m); // Catch MOVE_NULL and MOVE_NONE
-}
-
-inline Variant main_variant(Variant v) {
-	if (v < VARIANT_NB)
-		return v;
-	switch (v)
-	{
-#ifdef SUICIDE
-	case SUICIDE_VARIANT:
-		return ANTI_VARIANT;
-#endif
-#ifdef BUGHOUSE
-	case BUGHOUSE_VARIANT:
-		return CRAZYHOUSE_VARIANT;
-#endif
-#ifdef DISPLACEDGRID
-	case DISPLACEDGRID_VARIANT:
-		return GRID_VARIANT;
-#endif
-#ifdef LOOP
-	case LOOP_VARIANT:
-		return CRAZYHOUSE_VARIANT;
-#endif
-#ifdef PLACEMENT
-	case PLACEMENT_VARIANT:
-		return CRAZYHOUSE_VARIANT;
-#endif
-#ifdef SLIPPEDGRID
-	case SLIPPEDGRID_VARIANT:
-		return GRID_VARIANT;
-#endif
-#ifdef TWOKINGSSYMMETRIC
-	case TWOKINGSSYMMETRIC_VARIANT:
-		return TWOKINGS_VARIANT;
-#endif
-	default:
-		assert(false);
-		return CHESS_VARIANT; // Silence a warning
-	}
 }
 
 #endif // #ifndef TYPES_H_INCLUDED

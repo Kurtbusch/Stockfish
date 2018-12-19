@@ -2,18 +2,15 @@
   Stockfish, a UCI chess playing engine derived from Glaurung 2.1
   Copyright (C) 2004-2008 Tord Romstad (Glaurung author)
   Copyright (C) 2008-2015 Marco Costalba, Joona Kiiski, Tord Romstad
-  Copyright (C) 2015-2018 Marco Costalba, Joona Kiiski, Gary Linscott, Tord Romstad
-
+  Copyright (C) 2015-2019 Marco Costalba, Joona Kiiski, Gary Linscott, Tord Romstad
   Stockfish is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-
   Stockfish is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -39,64 +36,8 @@ extern vector<string> setup_bench(const Position&, istream&);
 
 namespace {
 
-  // FEN strings of the initial positions
-  const string StartFENs[SUBVARIANT_NB] = {
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-#ifdef ANTI
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-#endif
-#ifdef ATOMIC
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-#endif
-#ifdef CRAZYHOUSE
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[] w KQkq - 0 1",
-#endif
-#ifdef EXTINCTION
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-#endif
-#ifdef GRID
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-#endif
-#ifdef HORDE
-  "rnbqkbnr/pppppppp/8/1PP2PP1/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP w kq - 0 1",
-#endif
-#ifdef KOTH
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-#endif
-#ifdef LOSERS
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-#endif
-#ifdef RACE
-  "8/8/8/8/8/8/krbnNBRK/qrbnNBRQ w - - 0 1",
-#endif
-#ifdef THREECHECK
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 3+3 0 1",
-#endif
-#ifdef TWOKINGS
-  "rnbqkknr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKKNR w KQkq - 0 1",
-#endif
-#ifdef SUICIDE
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1",
-#endif
-#ifdef BUGHOUSE
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[] w KQkq - 0 1",
-#endif
-#ifdef DISPLACEDGRID
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-#endif
-#ifdef LOOP
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR[] w KQkq - 0 1",
-#endif
-#ifdef PLACEMENT
-  "8/pppppppp/8/8/8/8/PPPPPPPP/8[KQRRBBNNkqrrbbnn] w - -",
-#endif
-#ifdef SLIPPEDGRID
-  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-#endif
-#ifdef TWOKINGSSYMMETRIC
-  "rnbqkknr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKKNR w KQkq - 0 1",
-#endif
-  };
+  // FEN string of the initial position, normal chess
+  const char* StartFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 
   // position() is called when engine receives the "position" UCI command.
@@ -109,13 +50,11 @@ namespace {
     Move m;
     string token, fen;
 
-	Variant variant = UCI::variant_from_name(Options["UCI_Variant"]);
-
     is >> token;
 
     if (token == "startpos")
     {
-        fen = StartFENs[variant];
+        fen = StartFEN;
         is >> token; // Consume "moves" token if any
     }
     else if (token == "fen")
@@ -153,16 +92,8 @@ namespace {
     while (is >> token)
         value += (value.empty() ? "" : " ") + token;
 
-	if (Options.count(name))
-	{
-		Options[name] = value;
-		std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-		if (name == "uci_variant") {
-			Variant variant = UCI::variant_from_name(value);
-			sync_cout << "info string variant " << (string)Options["UCI_Variant"] << " startpos " << StartFENs[variant] << sync_endl;
-			//Tablebases::init(variant, Options["SyzygyPath"]);
-		}
-	}
+    if (Options.count(name))
+        Options[name] = value;
     else
         sync_cout << "No such option: " << name << sync_endl;
   }
@@ -259,7 +190,7 @@ void UCI::loop(int argc, char* argv[]) {
   StateListPtr states(new std::deque<StateInfo>(1));
   auto uiThread = std::make_shared<Thread>(0);
 
-  pos.set(StartFENs[CHESS_VARIANT], false, &states->back(), uiThread.get());
+  pos.set(StartFEN, false, &states->back(), uiThread.get());
 
   for (int i = 1; i < argc; ++i)
       cmd += std::string(argv[i]) + " ";
@@ -294,7 +225,11 @@ void UCI::loop(int argc, char* argv[]) {
       else if (token == "setoption")  setoption(is);
       else if (token == "go")         go(pos, is, states);
       else if (token == "position")   position(pos, is, states);
-      else if (token == "ucinewgame") Search::clear();
+	  else if (token == "ucinewgame")
+	  {
+		  Search::clear();
+		  sync_cout << "info string variant kingofthehill startpos rnbqkbnr/pppppppp/8/8/PPPPPPPP/PPPPPPPP/PPPPPPPP/PPPPPPPP kq - 0 1" << sync_endl;
+	  }
       else if (token == "isready")    sync_cout << "readyok" << sync_endl;
 
       // Additional custom non-UCI commands, mainly for debugging
@@ -379,13 +314,4 @@ Move UCI::to_move(const Position& pos, string& str) {
           return m;
 
   return MOVE_NONE;
-}
-
-Variant UCI::variant_from_name(const string& str) {
-
-	for (Variant v = CHESS_VARIANT; v < SUBVARIANT_NB; ++v)
-		if (variants[v] == str)
-			return v;
-
-	return CHESS_VARIANT;
 }
