@@ -43,6 +43,8 @@
 #include <climits>
 #include <cstdint>
 #include <cstdlib>
+#include <string>
+#include <vector>
 
 #if defined(_MSC_VER)
 // Disable some silly and noisy warning from MSVC compiler
@@ -102,6 +104,130 @@ typedef uint64_t Bitboard;
 
 constexpr int MAX_MOVES = 256;
 constexpr int MAX_PLY   = 128;
+
+enum Variant {
+	//main variants
+	CHESS_VARIANT,
+#ifdef ANTI
+	ANTI_VARIANT,
+#endif
+#ifdef ATOMIC
+	ATOMIC_VARIANT,
+#endif
+#ifdef CRAZYHOUSE
+	CRAZYHOUSE_VARIANT,
+#endif
+#ifdef EXTINCTION
+	EXTINCTION_VARIANT,
+#endif
+#ifdef GRID
+	GRID_VARIANT,
+#endif
+#ifdef HORDE
+	HORDE_VARIANT,
+#endif
+#ifdef KOTH
+	KOTH_VARIANT,
+#endif
+#ifdef LOSERS
+	LOSERS_VARIANT,
+#endif
+#ifdef RACE
+	RACE_VARIANT,
+#endif
+#ifdef THREECHECK
+	THREECHECK_VARIANT,
+#endif
+#ifdef TWOKINGS
+	TWOKINGS_VARIANT,
+#endif
+	VARIANT_NB,
+	LAST_VARIANT = VARIANT_NB - 1,
+	//subvariants
+#ifdef SUICIDE
+	SUICIDE_VARIANT,
+#endif
+#ifdef BUGHOUSE
+	BUGHOUSE_VARIANT,
+#endif
+#ifdef DISPLACEDGRID
+	DISPLACEDGRID_VARIANT,
+#endif
+#ifdef LOOP
+	LOOP_VARIANT,
+#endif
+#ifdef PLACEMENT
+	PLACEMENT_VARIANT,
+#endif
+#ifdef SLIPPEDGRID
+	SLIPPEDGRID_VARIANT,
+#endif
+#ifdef TWOKINGSSYMMETRIC
+	TWOKINGSSYMMETRIC_VARIANT,
+#endif
+	SUBVARIANT_NB,
+};
+
+//static const constexpr char* variants[] doesn't play nicely with uci.h
+static std::vector<std::string> variants = {
+	//main variants
+	"chess",
+#ifdef ANTI
+	"giveaway",
+#endif
+#ifdef ATOMIC
+	"atomic",
+#endif
+#ifdef CRAZYHOUSE
+	"crazyhouse",
+#endif
+#ifdef EXTINCTION
+	"extinction",
+#endif
+#ifdef GRID
+	"grid",
+#endif
+#ifdef HORDE
+	"horde",
+#endif
+#ifdef KOTH
+	"kingofthehill",
+#endif
+#ifdef LOSERS
+	"losers",
+#endif
+#ifdef RACE
+	"racingkings",
+#endif
+#ifdef THREECHECK
+	"3check",
+#endif
+#ifdef TWOKINGS
+	"twokings",
+#endif
+	//subvariants
+#ifdef SUICIDE
+	"suicide",
+#endif
+#ifdef BUGHOUSE
+	"bughouse",
+#endif
+#ifdef DISPLACEDGRID
+	"displacedgrid",
+#endif
+#ifdef LOOP
+	"loop",
+#endif
+#ifdef PLACEMENT
+	"placement",
+#endif
+#ifdef SLIPPEDGRID
+	"slippedgrid",
+#endif
+#ifdef TWOKINGSSYMMETRIC
+	"twokingssymmetric",
+#endif
+};
 
 /// A move needs 16 bits to be stored
 ///
@@ -294,6 +420,7 @@ constexpr int operator/(T d1, T d2) { return int(d1) / int(d2); }  \
 inline T& operator*=(T& d, int i) { return d = T(int(d) * i); }    \
 inline T& operator/=(T& d, int i) { return d = T(int(d) / i); }
 
+ENABLE_FULL_OPERATORS_ON(Variant)
 ENABLE_FULL_OPERATORS_ON(Value)
 ENABLE_FULL_OPERATORS_ON(Depth)
 ENABLE_FULL_OPERATORS_ON(Direction)
@@ -453,6 +580,45 @@ constexpr Move make(Square from, Square to, PieceType pt = KNIGHT) {
 
 constexpr bool is_ok(Move m) {
   return from_sq(m) != to_sq(m); // Catch MOVE_NULL and MOVE_NONE
+}
+
+inline Variant main_variant(Variant v) {
+	if (v < VARIANT_NB)
+		return v;
+	switch (v)
+	{
+#ifdef SUICIDE
+	case SUICIDE_VARIANT:
+		return ANTI_VARIANT;
+#endif
+#ifdef BUGHOUSE
+	case BUGHOUSE_VARIANT:
+		return CRAZYHOUSE_VARIANT;
+#endif
+#ifdef DISPLACEDGRID
+	case DISPLACEDGRID_VARIANT:
+		return GRID_VARIANT;
+#endif
+#ifdef LOOP
+	case LOOP_VARIANT:
+		return CRAZYHOUSE_VARIANT;
+#endif
+#ifdef PLACEMENT
+	case PLACEMENT_VARIANT:
+		return CRAZYHOUSE_VARIANT;
+#endif
+#ifdef SLIPPEDGRID
+	case SLIPPEDGRID_VARIANT:
+		return GRID_VARIANT;
+#endif
+#ifdef TWOKINGSSYMMETRIC
+	case TWOKINGSSYMMETRIC_VARIANT:
+		return TWOKINGS_VARIANT;
+#endif
+	default:
+		assert(false);
+		return CHESS_VARIANT; // Silence a warning
+	}
 }
 
 #endif // #ifndef TYPES_H_INCLUDED

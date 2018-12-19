@@ -23,6 +23,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include "types.h"
 
@@ -49,8 +50,8 @@ public:
   Option(OnChange = nullptr);
   Option(bool v, OnChange = nullptr);
   Option(const char* v, OnChange = nullptr);
+  Option(const char* v, const std::vector<std::string>& variants, OnChange = nullptr);
   Option(double v, int minv, int maxv, OnChange = nullptr);
-  Option(const char* v, const char* cur, OnChange = nullptr);
 
   Option& operator=(const std::string&);
   void operator<<(const Option&);
@@ -63,6 +64,7 @@ private:
 
   std::string defaultValue, currentValue, type;
   int min, max;
+  std::vector<std::string> comboValues;
   size_t idx;
   OnChange on_change;
 };
