@@ -157,6 +157,7 @@ namespace {
   constexpr Score CorneredBishop     = S( 50, 50);
   constexpr Score Hanging            = S( 69, 36);
   constexpr Score KingProtector      = S(  7,  8);
+  constexpr Score KingsidePiece      = S(  7,  0);
   constexpr Score KnightOnQueen      = S( 16, 12);
   constexpr Score LongDiagonalBishop = S( 45,  0);
   constexpr Score MinorBehindPawn    = S( 18,  3);
@@ -492,6 +493,9 @@ namespace {
 
     // King tropism bonus, to anticipate slow motion attacks on our king
     score -= CloseEnemies * tropism;
+
+	if ((file_of(ksq) > FILE_D) && (file_of(pos.square<KING>(Them)) > FILE_D))
+		score += KingsidePiece * popcount((pos.pieces(Us) ^ pos.pieces(Us, PAWN)) & (KingSide | FileDBB));
 
     if (T)
         Trace::add(KING, Us, score);
