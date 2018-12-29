@@ -347,7 +347,7 @@ namespace {
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
 
-				if ((s & attackedBy[Us][KNIGHT]) && popcount(pos.attacks_from<KNIGHT>(s) & mobilityArea[Us]) >= 5)
+				if ((pos.attacks_from<KNIGHT>(s) & pos.pieces(Us, KNIGHT)) && popcount(pos.attacks_from<KNIGHT>(s) & mobilityArea[Us]) >= 5)
 					score -= SuboptimalOccupier;
             }
 
