@@ -164,6 +164,7 @@ namespace {
   constexpr Score RestrictedPiece    = S(  7,  7);
   constexpr Score RookOnPawn         = S( 10, 32);
   constexpr Score SliderOnQueen      = S( 59, 18);
+  constexpr Score SuboptimalOccupier = S( 10,  0);
   constexpr Score ThreatByKing       = S( 24, 89);
   constexpr Score ThreatByPawnPush   = S( 48, 39);
   constexpr Score ThreatByRank       = S( 13,  0);
@@ -345,6 +346,9 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
+
+				if ((s & attackedBy[Us][KNIGHT]) && popcount(pos.attacks_from<KNIGHT>(s) & mobilityArea[Us]) >= 5)
+					score -= SuboptimalOccupier;
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
