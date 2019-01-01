@@ -553,7 +553,7 @@ namespace {
 
     // Check if we have an upcoming move which draws by repetition, or
     // if the opponent had an alternative move earlier to this position.
-    if (   pos.rule50_count() >= 3
+    /*if (   pos.rule50_count() >= 3
         && alpha < VALUE_DRAW
         && !rootNode
         && pos.has_game_cycle(ss->ply))
@@ -561,7 +561,7 @@ namespace {
         alpha = relative_rank(us, pos.square<KING>(us)) > relative_rank(~us, pos.square<KING>(~us)) ? VALUE_MATE : (relative_rank(us, pos.square<KING>(us)) < relative_rank(~us, pos.square<KING>(~us)) ? -VALUE_MATE : value_draw(depth, pos.this_thread()));
         if (alpha >= beta)
             return alpha;
-    }
+    }*/
 
     // Dive into quiescence search when the depth reaches zero
     if (depth < ONE_PLY)
