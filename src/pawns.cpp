@@ -31,7 +31,8 @@ namespace {
   #define V Value
   #define S(mg, eg) make_score(mg, eg)
 
-  // Pawn penalties
+  // Pawn bonuses/penalties
+  constexpr Score Advanced = S( 5, 10);
   constexpr Score Backward = S( 9, 24);
   constexpr Score Doubled  = S(11, 56);
   constexpr Score Isolated = S( 5, 15);
@@ -139,6 +140,9 @@ namespace {
 
         if (doubled && !support)
             score -= Doubled;
+
+		if (relative_rank(Us, s) >= RANK_5 && file_of(s) < FILE_C && file_of(pos.square<KING>(Them)) > FILE_E)
+			score += Advanced;
     }
 
     return score;
