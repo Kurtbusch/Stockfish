@@ -152,6 +152,7 @@ namespace {
   };
 
   // Assorted bonuses and penalties
+  constexpr Score AimedMajor         = S( 10, 10);
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CloseEnemies       = S(  8,  0);
   constexpr Score CorneredBishop     = S( 50, 50);
@@ -484,6 +485,9 @@ namespace {
 
     // King tropism bonus, to anticipate slow motion attacks on our king
     score -= CloseEnemies * tropism;
+
+	if (attacks_bb<ROOK>(ksq, pos.pieces() ^ pos.pieces(Us, PAWN)) & pos.pieces(Them, QUEEN, ROOK))
+		score -= AimedMajor;
 
     if (T)
         Trace::add(KING, Us, score);
