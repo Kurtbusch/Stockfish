@@ -672,7 +672,7 @@ namespace {
                 bonus += make_score(k * w, k * w);
             } 
 			
-			else if (r == RANK_7 && (pawn_attacks_bb<Us>(SquareBB[s]) & (attackedBy[Us][ROOK] | attackedBy[Us][QUEEN])))
+			else if (r == RANK_7 && (pawn_attacks_bb<Us>(SquareBB[s]) & attackedBy2[Them] & (attackedBy[Us][ROOK] | attackedBy[Us][QUEEN])))
 				bonus += ForcePromo;
 
         } // rank > RANK_3
