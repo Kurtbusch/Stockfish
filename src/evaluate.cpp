@@ -155,6 +155,7 @@ namespace {
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CloseEnemies       = S(  8,  0);
   constexpr Score CorneredBishop     = S( 50, 50);
+  constexpr Score ForcePromo         = S(  5, 20);
   constexpr Score Hanging            = S( 69, 36);
   constexpr Score KingProtector      = S(  7,  8);
   constexpr Score KnightOnQueen      = S( 16, 12);
@@ -669,7 +670,11 @@ namespace {
                     k += 4;
 
                 bonus += make_score(k * w, k * w);
-            }
+            } 
+			
+			else if (r == RANK_7 && (pawn_attacks_bb<Us>(SquareBB[s]) & (attackedBy[Us][ROOK] | attackedBy[Us][QUEEN])))
+				bonus += ForcePromo;
+
         } // rank > RANK_3
 
         // Scale down bonus for candidate passers which need more than one
