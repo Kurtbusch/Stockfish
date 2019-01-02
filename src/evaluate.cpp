@@ -160,6 +160,7 @@ namespace {
   constexpr Score KnightOnQueen      = S( 16, 12);
   constexpr Score LongDiagonalBishop = S( 45,  0);
   constexpr Score MinorBehindPawn    = S( 18,  3);
+  constexpr Score NoChecks           = S( 20,  0);
   constexpr Score PawnlessFlank      = S( 17, 95);
   constexpr Score RestrictedPiece    = S(  7,  7);
   constexpr Score RookOnPawn         = S( 10, 32);
@@ -459,6 +460,9 @@ namespace {
         kingDanger += KnightSafeCheck;
     else
         unsafeChecks |= b;
+
+	if (kingDanger == 0 && !unsafeChecks)
+		score += NoChecks;
 
     // Unsafe or occupied checking squares will also be considered, as long as
     // the square is in the attacker's mobility area.
