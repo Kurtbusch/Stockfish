@@ -347,17 +347,20 @@ namespace {
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
 
-				blocked |= (pos.pieces(Them, PAWN) & attackedBy[Them][ALL_PIECES]);
-				Bitboard mobarea = b & mobilityArea[Us];
-				score -= BadBishop;
-
-				while (mobarea)
+				if (relative_rank(Us, s) <= RANK_4)
 				{
-					Square s1 = pop_lsb(&mobarea);
-					if (attacks_bb<BISHOP>(s1, blocked) & (Us == WHITE ? Rank5BB : Rank4BB) & ~blocked)
+					blocked |= (pos.pieces(Them, PAWN) & attackedBy[Them][ALL_PIECES]);
+					Bitboard mobarea = (b | s) & mobilityArea[Us];
+					score -= BadBishop;
+
+					while (mobarea)
 					{
-						score += BadBishop;
-						break;
+						Square s1 = pop_lsb(&mobarea);
+						if (attacks_bb<BISHOP>(s1, blocked) & (Us == WHITE ? Rank5BB : Rank4BB) & ~blocked)
+						{
+							score += BadBishop;
+							break;
+						}
 					}
 				}
             }
