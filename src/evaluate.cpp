@@ -154,7 +154,7 @@ namespace {
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CloseEnemies       = S(  8,  0);
-  constexpr Score ConfinedBishop     = S( 20, 20);
+  constexpr Score ConfinedBishop     = S( 20, 50);
   constexpr Score CorneredBishop     = S( 50, 50);
   constexpr Score Hanging            = S( 69, 36);
   constexpr Score KingProtector      = S(  7,  8);
@@ -347,7 +347,8 @@ namespace {
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
 
-				if (mob == 0 && (pos.attacks_from<BISHOP>(s) & attackedBy[Them][PAWN] & ~pos.pieces()))
+				if (   mob == 0 && relative_rank(Us, s) == RANK_1 
+					&& (pos.attacks_from<BISHOP>(s) & attackedBy[Them][PAWN] & ~pos.pieces()))
 					score -= ConfinedBishop;
             }
 
