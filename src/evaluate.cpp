@@ -154,7 +154,7 @@ namespace {
   // Assorted bonuses and penalties
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CloseEnemies       = S(  8,  0);
-  constexpr Score CorneredBishop     = S(100,100);
+  constexpr Score CorneredBishop     = S( 50, 50);
   constexpr Score Hanging            = S( 69, 36);
   constexpr Score KingProtector      = S(  7,  8);
   constexpr Score KnightOnQueen      = S( 16, 12);
@@ -361,9 +361,9 @@ namespace {
             {
                 Direction d = pawn_push(Us) + (file_of(s) == FILE_A ? EAST : WEST);
                 if (pos.piece_on(s + d) == make_piece(Us, PAWN))
-                    score -= !pos.empty(s + d + pawn_push(Us))                ? CorneredBishop * 2
-                            : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop
-                                                                              : CorneredBishop / 2;
+                    score -= !pos.empty(s + d + pawn_push(Us))                ? CorneredBishop * 4
+                            : pos.piece_on(s + d + d) == make_piece(Us, PAWN) ? CorneredBishop * 2
+                                                                              : CorneredBishop;
             }
         }
 
