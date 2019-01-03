@@ -349,7 +349,7 @@ namespace {
 
 				if (mob <= 4 && relative_rank(Us, s) <= RANK_4)
 				{
-					blocked |= (pos.pieces(Them, PAWN) & attackedBy[Them][ALL_PIECES]);
+					blocked |= pos.pieces(Them, PAWN);
 					Bitboard mobarea = (b | s) & mobilityArea[Us];
 					score -= BadBishop;
 
