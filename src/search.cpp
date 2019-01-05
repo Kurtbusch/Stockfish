@@ -211,7 +211,7 @@ void MainThread::search() {
   {
       rootMoves.emplace_back(MOVE_NONE);
       sync_cout << "info depth 0 score "
-                << UCI::value(rootPos.checkers() ? -VALUE_MATE : VALUE_DRAW)
+                << UCI::value(-VALUE_MATE)
                 << sync_endl;
   }
   else
@@ -1184,7 +1184,7 @@ moves_loop: // When in check, search starts from here
 
     if (!moveCount)
         bestValue = excludedMove ? alpha
-                   :     inCheck ? mated_in(ss->ply) : VALUE_DRAW;
+                   : mated_in(ss->ply);
     else if (bestMove)
     {
         // Quiet best move: update move sorting heuristics
