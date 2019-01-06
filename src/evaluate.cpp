@@ -375,9 +375,19 @@ namespace {
             // Penalty when trapped by the king, even more if the king cannot castle
             else if (mob <= 3)
             {
-                File kf = file_of(pos.square<KING>(Us));
-                if ((kf < FILE_E) == (file_of(s) < kf))
-                    score -= (TrappedRook - make_score(mob * 22, 0)) * (1 + !pos.castling_rights(Us));
+				Bitboard mobarea = b & mobilityArea[Us];
+				score -= TrappedRook;
+				b |= s;
+
+				while (mobarea)
+				{
+					Square s1 = pop_lsb(&mobarea);
+					if (attacks_bb<ROOK>(s1, pos.pieces() ^ pos.pieces(QUEEN) ^ pos.pieces(Us, ROOK)) & ~b)
+					{
+						score += TrappedRook;
+						break;
+					}
+				}
             }
         }
 
