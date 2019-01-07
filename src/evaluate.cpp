@@ -152,6 +152,7 @@ namespace {
   };
 
   // Assorted bonuses and penalties
+  constexpr Score BadBishop          = S( 20, 50);
   constexpr Score BishopPawns        = S(  3,  7);
   constexpr Score CloseEnemies       = S(  8,  0);
   constexpr Score CorneredBishop     = S( 50, 50);
@@ -345,6 +346,23 @@ namespace {
                 // Bonus for bishop on a long diagonal which can "see" both center squares
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
+
+				if (relative_rank(Us, s) <= RANK_4)
+				{
+					blocked |= pos.pieces(Them, PAWN) & attackedBy[Them][PAWN];
+					Bitboard mobarea = (attacks_bb<BISHOP>(s, pos.pieces(PAWN)) | s) & mobilityArea[Us];
+					score -= BadBishop;
+
+					while (mobarea)
+					{
+						Square s1 = pop_lsb(&mobarea);
+						if (attacks_bb<BISHOP>(s1, blocked) & (Us == WHITE ? Rank5BB : Rank4BB) & ~blocked)
+						{
+							score += BadBishop;
+							break;
+						}
+					}
+				}
             }
 
             // An important Chess960 pattern: A cornered bishop blocked by a friendly
