@@ -347,7 +347,7 @@ namespace {
                 if (more_than_one(attacks_bb<BISHOP>(s, pos.pieces(PAWN)) & Center))
                     score += LongDiagonalBishop;
 
-				if (relative_rank(Us, s) <= RANK_3)
+				if (relative_rank(Us, s) <= RANK_2)
 				{
 					blocked |= pos.pieces(Them, PAWN);
 					Bitboard mobarea = (b | s) & mobilityArea[Us];
